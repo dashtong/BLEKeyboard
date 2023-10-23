@@ -1,0 +1,2 @@
+*/hermes filter=lfs diff=lfs merge=lfs -text
+hermes filter=lfs diff=lfs merge=lfs -text
