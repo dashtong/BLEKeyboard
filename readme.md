@@ -15,3 +15,5 @@ Using iPhone as the keyboard of iPad, via ESP32
 ## Sample Video
 ![](https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExaXRod3loeWw0Zzl3M2xrejR5dzJmNGtvMHBma2xjaWh6dGNjMWV4eCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/7nJeHrr6FcJNFw1v6A/source.gif)
 
+## Credits
+Referencing the [ESP32-BLE-Combo](https://github.com/blackketter/ESP32-BLE-Combo) library.
