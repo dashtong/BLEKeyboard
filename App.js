@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
     width: 16,
     height: 16,
     borderRadius: 8,
-    marginLeft: 35,
+    marginLeft: 25,
     marginRight: 35,
     marginTop: 25
   },

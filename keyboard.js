@@ -8,6 +8,43 @@ const manager = new BleManager()
 const keyboardData = [
   [
     {
+      key: 'Esc',
+      shifted: '',
+      caps: false
+    },
+    {
+      key: 'Insert',
+      shifted: '',
+      caps: false
+    },
+    {
+      key: 'Del',
+      shifted: '',
+      caps: false
+    },
+    {
+      key: 'Home',
+      shifted: '',
+      caps: false
+    },
+    {
+      key: 'End',
+      shifted: '',
+      caps: false
+    },
+    {
+      key: 'Up',
+      shifted: '',
+      caps: false
+    },
+    {
+      key: 'Down',
+      shifted: '',
+      caps: false
+    },
+  ],
+  [
+    {
       key: '`',
       shifted: '~',
       caps: false
@@ -256,7 +293,7 @@ export default class Keyboard extends Component {
     super(props)
     this.isCapped = false
     this.isShifted = false
-    this.state = { isPressed: {}, p: 2 }
+    this.state = { isPressed: {} }
   }
 
   getKeyText(row, column) {
@@ -289,6 +326,25 @@ export default class Keyboard extends Component {
     )
   }
 
+  renderSpecialText(text, firstRow = false) {
+    return (
+      <View>
+        <Text style={[keyboardStyles.keyButtonTextStyle, keyboardStyles.keyboardSpecialText,
+        firstRow ?
+          {
+            marginTop: 10,
+          } :
+
+          {
+            marginTop: 14,
+          }
+        ]}>
+          {text}
+        </Text>
+      </View>
+    )
+  }
+
   handleKeyboardTouchStarted(key) {
     let isPressed = { ...this.state.isPressed }
     this.notify(key + '1')
@@ -304,10 +360,69 @@ export default class Keyboard extends Component {
   }
 
   renderKeyboardFirstRow() {
-    let c = [0, 50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 60]
     return (
       <View style={[keyboardStyles.keyboardRowContainer]}>
-        {keyboardData[0].map((keyData, idx) => (
+        <View
+          style={[
+            keyboardStyles.keyButtonStyle,
+            keyboardStyles.keyButtonFirstRowStyle,
+          ]}
+          onTouchStart={() => { this.handleKeyboardTouchStarted(keyboardData[0][0].key) }}
+          onTouchEnd={() => { this.handleKeyboardTouchEnded(keyboardData[0][0].key) }}
+          key={keyboardData[0][0].key}>
+          {this.renderSpecialText(keyboardData[0][0].key, true)}
+          <View
+            style={[
+              keyboardStyles.keyButtonStyle,
+              keyboardData[0][0].key in this.state.isPressed ?
+                keyboardStyles.keyButtonOverlayStyle :
+                keyboardStyles.keyButtonTransparentStyle
+            ]}>
+            {this.renderSpecialText(keyboardData[0][0].key, true)}
+          </View>
+        </View>
+
+        <View
+          style={[
+            keyboardStyles.keyButtonStyle,
+            keyboardStyles.keyButtonTransparentStyle,
+            keyboardStyles.keyButtonFirstRowStyle,
+            {
+              width: 285
+            }
+          ]}
+          key="">
+        </View>
+
+        {keyboardData[0].slice(1).map((keyData, idx) => (
+          <View
+            style={[
+              keyboardStyles.keyButtonStyle,
+              keyboardStyles.keyButtonFirstRowStyle,
+            ]}
+            onTouchStart={() => { this.handleKeyboardTouchStarted(keyData.key) }}
+            onTouchEnd={() => { this.handleKeyboardTouchEnded(keyData.key) }}
+            key={keyData.key}>
+            {this.renderSpecialText(keyData.key, true)}
+            <View
+              style={[
+                keyboardStyles.keyButtonStyle,
+                keyData.key in this.state.isPressed ?
+                  keyboardStyles.keyButtonOverlayStyle :
+                  keyboardStyles.keyButtonTransparentStyle
+              ]}>
+              {this.renderSpecialText(keyData.key, true)}
+            </View>
+          </View>
+        ))}
+      </View>
+    )
+  }
+
+  renderKeyboardSecondRow() {
+    return (
+      <View style={[keyboardStyles.keyboardRowContainer]}>
+        {keyboardData[1].map((keyData, idx) => (
           <View
             style={[
               keyboardStyles.keyButtonStyle
@@ -315,15 +430,15 @@ export default class Keyboard extends Component {
             onTouchStart={() => { this.handleKeyboardTouchStarted(keyData.key) }}
             onTouchEnd={() => { this.handleKeyboardTouchEnded(keyData.key) }}
             key={keyData.key}>
-            {this.renderKeyText(0, idx)}
+            {this.renderKeyText(1, idx)}
             <View
               style={[
                 keyboardStyles.keyButtonStyle,
                 keyData.key in this.state.isPressed ?
                   keyboardStyles.keyButtonOverlayStyle :
-                  keyboardStyles.keyButtonPressedStyle
+                  keyboardStyles.keyButtonTransparentStyle
               ]}>
-              {this.renderKeyText(0, idx)}
+              {this.renderKeyText(1, idx)}
             </View>
           </View>
         ))}
@@ -338,104 +453,19 @@ export default class Keyboard extends Component {
           onTouchStart={() => { this.handleKeyboardTouchStarted('BACKSPACE') }}
           onTouchEnd={() => { this.handleKeyboardTouchEnded('BACKSPACE') }}
           key={'BACKSPACE'}>
-          <Text style={[keyboardStyles.keyButtonTextStyle, keyboardStyles.keyboardSpecialText]}>
-            Backspace
-          </Text>
+          {this.renderSpecialText("Backspace")}
           <View
             style={[
               keyboardStyles.keyButtonStyle,
               'BACKSPACE' in this.state.isPressed ?
                 keyboardStyles.keyButtonOverlayStyle :
-                keyboardStyles.keyButtonPressedStyle,
+                keyboardStyles.keyButtonTransparentStyle,
               {
                 height: '110%',
                 width: '110%',
               }
             ]}>
-            <Text style={[keyboardStyles.keyButtonTextStyle, keyboardStyles.keyboardSpecialText]}>
-              Backspace
-            </Text>
-          </View>
-        </View>
-      </View>
-    )
-  }
-  renderKeyboardSecondRow() {
-    return (
-      <View style={[keyboardStyles.keyboardRowContainer]}>
-        <View
-          style={[
-            keyboardStyles.keyButtonStyle,
-            {
-              width: 70,
-              alignItems: 'center'
-            }
-          ]}
-          onTouchStart={() => { this.handleKeyboardTouchStarted('TAB') }}
-          onTouchEnd={() => { this.handleKeyboardTouchEnded('TAB') }}
-          key={'TAB'}>
-          <Text style={[keyboardStyles.keyButtonTextStyle, keyboardStyles.keyboardSpecialText]}>
-            Tab
-          </Text>
-          <View
-            style={[
-              keyboardStyles.keyButtonStyle,
-              'TAB' in this.state.isPressed ?
-                keyboardStyles.keyButtonOverlayStyle :
-                keyboardStyles.keyButtonPressedStyle,
-                {
-                  height: '110%',
-                  width: '110%',
-                }
-            ]}>
-            <Text style={[keyboardStyles.keyButtonTextStyle, keyboardStyles.keyboardSpecialText]}>
-              Tab
-            </Text>
-          </View>
-        </View>
-
-        {keyboardData[1].slice(0, -1).map((keyData, idx) => (
-          <View
-            style={[
-              keyboardStyles.keyButtonStyle
-            ]}
-            onTouchStart={() => { this.handleKeyboardTouchStarted(keyData.key) }}
-            onTouchEnd={() => { this.handleKeyboardTouchEnded(keyData.key) }}
-            key={keyData.key}>
-            {this.renderKeyText(1, idx)}
-            <View
-              style={[
-                keyboardStyles.keyButtonStyle,
-                keyData.key in this.state.isPressed ?
-                  keyboardStyles.keyButtonOverlayStyle :
-                  keyboardStyles.keyButtonPressedStyle
-              ]}>
-              {this.renderKeyText(1, idx)}
-            </View>
-          </View>
-        ))}
-
-        <View
-          style={[
-            keyboardStyles.keyButtonStyle,
-            {
-              width: 70
-            }
-          ]}
-          onTouchStart={() => { this.handleKeyboardTouchStarted(keyboardData[1][keyboardData[1].length - 1].key) }}
-          onTouchEnd={() => { this.handleKeyboardTouchEnded(keyboardData[1][keyboardData[1].length - 1].key) }}
-          key={keyboardData[1][keyboardData[1].length - 1].key}>
-          {this.renderKeyText(1, 12)}
-          <View
-            style={[
-              keyboardStyles.keyButtonStyle,
-              keyboardData[1][keyboardData[1].length - 1].key in this.state.isPressed ?
-                keyboardStyles.keyButtonOverlayStyle :
-                keyboardStyles.keyButtonPressedStyle
-            ]}>
-            <Text style={[keyboardStyles.keyButtonTextStyle, { marginTop: 6 }]}>
-              {this.renderKeyText(1, 12)}
-            </Text>
+            {this.renderSpecialText("Backspace")}
           </View>
         </View>
       </View>
@@ -449,34 +479,30 @@ export default class Keyboard extends Component {
           style={[
             keyboardStyles.keyButtonStyle,
             {
-              width: 90,
+              width: 70,
               alignItems: 'center'
             }
           ]}
-          onTouchStart={() => { this.handleKeyboardTouchStarted('CAPS') }}
-          onTouchEnd={() => { this.handleKeyboardTouchEnded('CAPS') }}
-          key={'CAPS'}>
-          <Text style={[keyboardStyles.keyButtonTextStyle, keyboardStyles.keyboardSpecialText]}>
-            Caps Lock
-          </Text>
+          onTouchStart={() => { this.handleKeyboardTouchStarted('TAB') }}
+          onTouchEnd={() => { this.handleKeyboardTouchEnded('TAB') }}
+          key={'TAB'}>
+          {this.renderSpecialText("Tab")}
           <View
             style={[
               keyboardStyles.keyButtonStyle,
-              'CAPS' in this.state.isPressed ?
+              'TAB' in this.state.isPressed ?
                 keyboardStyles.keyButtonOverlayStyle :
-                keyboardStyles.keyButtonPressedStyle,
-                {
-                  height: '108%',
-                  width: '108%',
-                }
+                keyboardStyles.keyButtonTransparentStyle,
+              {
+                height: '110%',
+                width: '110%',
+              }
             ]}>
-            <Text style={[keyboardStyles.keyButtonTextStyle, keyboardStyles.keyboardSpecialText]}>
-              Caps Lock
-            </Text>
+            {this.renderSpecialText("Tab")}
           </View>
         </View>
 
-        {keyboardData[2].map((keyData, idx) => (
+        {keyboardData[2].slice(0, -1).map((keyData, idx) => (
           <View
             style={[
               keyboardStyles.keyButtonStyle
@@ -490,7 +516,7 @@ export default class Keyboard extends Component {
                 keyboardStyles.keyButtonStyle,
                 keyData.key in this.state.isPressed ?
                   keyboardStyles.keyButtonOverlayStyle :
-                  keyboardStyles.keyButtonPressedStyle
+                  keyboardStyles.keyButtonTransparentStyle
               ]}>
               {this.renderKeyText(2, idx)}
             </View>
@@ -501,29 +527,22 @@ export default class Keyboard extends Component {
           style={[
             keyboardStyles.keyButtonStyle,
             {
-              width: 100,
-              alignItems: 'center'
+              width: 70
             }
           ]}
-          onTouchStart={() => { this.handleKeyboardTouchStarted('ENTER') }}
-          onTouchEnd={() => { this.handleKeyboardTouchEnded('ENTER') }}
-          key={'ENTER'}>
-          <Text style={[keyboardStyles.keyButtonTextStyle, keyboardStyles.keyboardSpecialText]}>
-            Enter
-          </Text>
+          onTouchStart={() => { this.handleKeyboardTouchStarted(keyboardData[1][keyboardData[1].length - 1].key) }}
+          onTouchEnd={() => { this.handleKeyboardTouchEnded(keyboardData[1][keyboardData[1].length - 1].key) }}
+          key={keyboardData[2][keyboardData[2].length - 1].key}>
+          {this.renderKeyText(2, 12)}
           <View
             style={[
               keyboardStyles.keyButtonStyle,
-              'ENTER' in this.state.isPressed ?
+              keyboardData[2][keyboardData[2].length - 1].key in this.state.isPressed ?
                 keyboardStyles.keyButtonOverlayStyle :
-                keyboardStyles.keyButtonPressedStyle,
-                {
-                  height: '108%',
-                  width: '108%',
-                }
+                keyboardStyles.keyButtonTransparentStyle
             ]}>
-            <Text style={[keyboardStyles.keyButtonTextStyle, keyboardStyles.keyboardSpecialText]}>
-              Enter
+            <Text style={[keyboardStyles.keyButtonTextStyle, { marginTop: 6 }]}>
+              {this.renderKeyText(2, 12)}
             </Text>
           </View>
         </View>
@@ -538,33 +557,28 @@ export default class Keyboard extends Component {
           style={[
             keyboardStyles.keyButtonStyle,
             {
-              width: 115,
+              width: 90,
               alignItems: 'center'
             }
           ]}
-          onTouchStart={() => { this.handleKeyboardTouchStarted('SHIFT_LEFT') }}
-          onTouchEnd={() => { this.handleKeyboardTouchEnded('SHIFT_LEFT') }}
-          key={'SHIFT_LEFT'}>
-          <Text style={[keyboardStyles.keyButtonTextStyle, keyboardStyles.keyboardSpecialText]}>
-            Shift
-          </Text>
+          onTouchStart={() => { this.handleKeyboardTouchStarted('CAPS') }}
+          onTouchEnd={() => { this.handleKeyboardTouchEnded('CAPS') }}
+          key={'CAPS'}>
+          {this.renderSpecialText("Caps Lock")}
           <View
             style={[
               keyboardStyles.keyButtonStyle,
-              'SHIFT_LEFT' in this.state.isPressed ?
+              'CAPS' in this.state.isPressed ?
                 keyboardStyles.keyButtonOverlayStyle :
-                keyboardStyles.keyButtonPressedStyle,
-                {
-                  height: '108%',
-                  width: '108%',
-                }
+                keyboardStyles.keyButtonTransparentStyle,
+              {
+                height: '108%',
+                width: '108%',
+              }
             ]}>
-            <Text style={[keyboardStyles.keyButtonTextStyle, keyboardStyles.keyboardSpecialText]}>
-              Shift
-            </Text>
+            {this.renderSpecialText("Caps Lock")}
           </View>
         </View>
-
 
         {keyboardData[3].map((keyData, idx) => (
           <View
@@ -580,9 +594,91 @@ export default class Keyboard extends Component {
                 keyboardStyles.keyButtonStyle,
                 keyData.key in this.state.isPressed ?
                   keyboardStyles.keyButtonOverlayStyle :
-                  keyboardStyles.keyButtonPressedStyle
+                  keyboardStyles.keyButtonTransparentStyle
               ]}>
               {this.renderKeyText(3, idx)}
+            </View>
+          </View>
+        ))}
+
+        <View
+          style={[
+            keyboardStyles.keyButtonStyle,
+            {
+              width: 100,
+              alignItems: 'center'
+            }
+          ]}
+          onTouchStart={() => { this.handleKeyboardTouchStarted('ENTER') }}
+          onTouchEnd={() => { this.handleKeyboardTouchEnded('ENTER') }}
+          key={'ENTER'}>
+          {this.renderSpecialText("Enter")}
+          <View
+            style={[
+              keyboardStyles.keyButtonStyle,
+              'ENTER' in this.state.isPressed ?
+                keyboardStyles.keyButtonOverlayStyle :
+                keyboardStyles.keyButtonTransparentStyle,
+              {
+                height: '108%',
+                width: '108%',
+              }
+            ]}>
+            {this.renderSpecialText("Enter")}
+          </View>
+        </View>
+      </View>
+    )
+  }
+
+  renderKeyboardFifthRow() {
+    return (
+      <View style={[keyboardStyles.keyboardRowContainer]}>
+        <View
+          style={[
+            keyboardStyles.keyButtonStyle,
+            {
+              width: 115,
+              alignItems: 'center'
+            }
+          ]}
+          onTouchStart={() => { this.handleKeyboardTouchStarted('SHIFT_LEFT') }}
+          onTouchEnd={() => { this.handleKeyboardTouchEnded('SHIFT_LEFT') }}
+          key={'SHIFT_LEFT'}>
+          {this.renderSpecialText("Shift")}
+          <View
+            style={[
+              keyboardStyles.keyButtonStyle,
+              'SHIFT_LEFT' in this.state.isPressed ?
+                keyboardStyles.keyButtonOverlayStyle :
+                keyboardStyles.keyButtonTransparentStyle,
+              {
+                height: '108%',
+                width: '108%',
+              }
+            ]}>
+            {this.renderSpecialText("Shift")}
+          </View>
+        </View>
+
+
+        {keyboardData[4].map((keyData, idx) => (
+          <View
+            style={[
+              keyboardStyles.keyButtonStyle
+            ]}
+            onTouchStart={() => { this.handleKeyboardTouchStarted(keyData.key) }}
+            onTouchEnd={() => { this.handleKeyboardTouchEnded(keyData.key) }}
+            key={keyData.key}>
+            {this.renderKeyText(4, idx)}
+            <View
+              style={[
+                keyboardStyles.keyButtonStyle,
+                keyData.key in this.state.isPressed ?
+                  keyboardStyles.keyButtonOverlayStyle :
+                  keyboardStyles.keyButtonTransparentStyle
+              ]}>
+              {this.renderKeyText(4, idx)}
             </View>
           </View>
         ))}
@@ -598,30 +694,26 @@ export default class Keyboard extends Component {
           onTouchStart={() => { this.handleKeyboardTouchStarted('SHIFT_RIGHT') }}
           onTouchEnd={() => { this.handleKeyboardTouchEnded('SHIFT_RIGHT') }}
           key={'SHIFT_RIGHT'}>
-          <Text style={[keyboardStyles.keyButtonTextStyle, keyboardStyles.keyboardSpecialText]}>
-            Shift
-          </Text>
+          {this.renderSpecialText("Shift")}
           <View
             style={[
               keyboardStyles.keyButtonStyle,
               'SHIFT_RIGHT' in this.state.isPressed ?
                 keyboardStyles.keyButtonOverlayStyle :
-                keyboardStyles.keyButtonPressedStyle,
-                {
-                  height: '108%',
-                  width: '108%',
-                }
+                keyboardStyles.keyButtonTransparentStyle,
+              {
+                height: '108%',
+                width: '108%',
+              }
             ]}>
-            <Text style={[keyboardStyles.keyButtonTextStyle, keyboardStyles.keyboardSpecialText]}>
-              Shift
-            </Text>
+            {this.renderSpecialText("Shift")}
           </View>
         </View>
       </View>
     )
   }
 
-  renderKeyboardFifthRow() {
+  renderKeyboardSixthRow() {
     return (
       <View style={[keyboardStyles.keyboardRowContainer]}>
         <View
@@ -632,15 +724,13 @@ export default class Keyboard extends Component {
           onTouchStart={() => { this.handleKeyboardTouchStarted('CTRL_LEFT') }}
           onTouchEnd={() => { this.handleKeyboardTouchEnded('CTRL_LEFT') }}
           key={'CTRL_LEFT'}>
-          <Text style={[keyboardStyles.keyButtonTextStyle, keyboardStyles.keyboardSpecialText]}>
-            Ctrl
-          </Text>
+          {this.renderSpecialText("Ctrl")}
           <View
             style={[
               keyboardStyles.keyButtonStyle,
               'CTRL_LEFT' in this.state.isPressed ?
                 keyboardStyles.keyButtonOverlayStyle :
-                keyboardStyles.keyButtonPressedStyle
+                keyboardStyles.keyButtonTransparentStyle
             ]}>
             <Text style={[keyboardStyles.keyButtonTextStyle, keyboardStyles.keyboardSpecialText]}>
               Ctrl
@@ -655,19 +745,15 @@ export default class Keyboard extends Component {
           onTouchStart={() => { this.handleKeyboardTouchStarted('WIN_LEFT') }}
           onTouchEnd={() => { this.handleKeyboardTouchEnded('WIN_LEFT') }}
           key={'WIN_LEFT'}>
-          <Text style={[keyboardStyles.keyButtonTextStyle, keyboardStyles.keyboardSpecialText]}>
-            Win
-          </Text>
+          {this.renderSpecialText("Win")}
           <View
             style={[
               keyboardStyles.keyButtonStyle,
               'WIN_LEFT' in this.state.isPressed ?
                 keyboardStyles.keyButtonOverlayStyle :
-                keyboardStyles.keyButtonPressedStyle
+                keyboardStyles.keyButtonTransparentStyle
             ]}>
-            <Text style={[keyboardStyles.keyButtonTextStyle, keyboardStyles.keyboardSpecialText]}>
-              Win
-            </Text>
+            {this.renderSpecialText("Win")}
           </View>
         </View>
         <View
@@ -678,19 +764,15 @@ export default class Keyboard extends Component {
           onTouchStart={() => { this.handleKeyboardTouchStarted('ALT_LEFT') }}
           onTouchEnd={() => { this.handleKeyboardTouchEnded('ALT_LEFT') }}
           key={'ALT_LEFT'}>
-          <Text style={[keyboardStyles.keyButtonTextStyle, keyboardStyles.keyboardSpecialText]}>
-            Alt
-          </Text>
+          {this.renderSpecialText("Alt")}
           <View
             style={[
               keyboardStyles.keyButtonStyle,
               'ALT_LEFT' in this.state.isPressed ?
                 keyboardStyles.keyButtonOverlayStyle :
-                keyboardStyles.keyButtonPressedStyle
+                keyboardStyles.keyButtonTransparentStyle
             ]}>
-            <Text style={[keyboardStyles.keyButtonTextStyle, keyboardStyles.keyboardSpecialText]}>
-              Alt
-            </Text>
+            {this.renderSpecialText("Alt")}
           </View>
         </View>
         <View
@@ -708,13 +790,13 @@ export default class Keyboard extends Component {
               keyboardStyles.keyButtonStyle,
               'SPACE' in this.state.isPressed ?
                 keyboardStyles.keyButtonOverlayStyle :
-                keyboardStyles.keyButtonPressedStyle,
-                {
-                  height: '103%',
-                  width: '103%',
-                  marginLeft: -4,
-                  marginTop: -2,
-                }
+                keyboardStyles.keyButtonTransparentStyle,
+              {
+                height: '103%',
+                width: '103%',
+                marginLeft: -4,
+                marginTop: -2,
+              }
             ]}>
           </View>
         </View>
@@ -726,19 +808,15 @@ export default class Keyboard extends Component {
           onTouchStart={() => { this.handleKeyboardTouchStarted('ALT_RIGHT') }}
           onTouchEnd={() => { this.handleKeyboardTouchEnded('ALT_RIGHT') }}
           key={'ALT_RIGHT'}>
-          <Text style={[keyboardStyles.keyButtonTextStyle, keyboardStyles.keyboardSpecialText]}>
-            Alt
-          </Text>
+          {this.renderSpecialText("Alt")}
           <View
             style={[
               keyboardStyles.keyButtonStyle,
               'ALT_RIGHT' in this.state.isPressed ?
                 keyboardStyles.keyButtonOverlayStyle :
-                keyboardStyles.keyButtonPressedStyle
+                keyboardStyles.keyButtonTransparentStyle
             ]}>
-            <Text style={[keyboardStyles.keyButtonTextStyle, keyboardStyles.keyboardSpecialText]}>
-              Alt
-            </Text>
+            {this.renderSpecialText("Alt")}
           </View>
         </View>
         <View
@@ -749,19 +827,15 @@ export default class Keyboard extends Component {
           onTouchStart={() => { this.handleKeyboardTouchStarted('WIN_RIGHT') }}
           onTouchEnd={() => { this.handleKeyboardTouchEnded('WIN_RIGHT') }}
           key={'WIN_RIGHT'}>
-          <Text style={[keyboardStyles.keyButtonTextStyle, keyboardStyles.keyboardSpecialText]}>
-            Win
-          </Text>
+          {this.renderSpecialText("Win")}
           <View
             style={[
               keyboardStyles.keyButtonStyle,
               'WIN_RIGHT' in this.state.isPressed ?
                 keyboardStyles.keyButtonOverlayStyle :
-                keyboardStyles.keyButtonPressedStyle
+                keyboardStyles.keyButtonTransparentStyle
             ]}>
-            <Text style={[keyboardStyles.keyButtonTextStyle, keyboardStyles.keyboardSpecialText]}>
-              Win
-            </Text>
+            {this.renderSpecialText("Win")}
           </View>
         </View>
         <View
@@ -772,15 +846,13 @@ export default class Keyboard extends Component {
           onTouchStart={() => { }}
           onTouchEnd={() => { }}
           key={'FUNC'}>
-          <Text style={[keyboardStyles.keyButtonTextStyle, keyboardStyles.keyboardSpecialText]}>
-            Fn
-          </Text>
+          {this.renderSpecialText("Fn")}
           <View
             style={[
               keyboardStyles.keyButtonStyle,
               'FUNC' in this.state.isPressed ?
                 keyboardStyles.keyButtonOverlayStyle :
-                keyboardStyles.keyButtonPressedStyle
+                keyboardStyles.keyButtonTransparentStyle
             ]}>
             <Text style={[keyboardStyles.keyButtonTextStyle, keyboardStyles.keyboardSpecialText]}>
               Fn
@@ -795,19 +867,15 @@ export default class Keyboard extends Component {
           onTouchStart={() => { this.handleKeyboardTouchStarted('CTRL_RIGHT') }}
           onTouchEnd={() => { this.handleKeyboardTouchEnded('CTRL_RIGHT') }}
           key={'CTRL_RIGHT'}>
-          <Text style={[keyboardStyles.keyButtonTextStyle, keyboardStyles.keyboardSpecialText]}>
-            Ctrl
-          </Text>
+          {this.renderSpecialText("Ctrl")}
           <View
             style={[
               keyboardStyles.keyButtonStyle,
               'CTRL_RIGHT' in this.state.isPressed ?
                 keyboardStyles.keyButtonOverlayStyle :
-                keyboardStyles.keyButtonPressedStyle
+                keyboardStyles.keyButtonTransparentStyle
             ]}>
-            <Text style={[keyboardStyles.keyButtonTextStyle, keyboardStyles.keyboardSpecialText]}>
-              Ctrl
-            </Text>
+            {this.renderSpecialText("Ctrl")}
           </View>
         </View>
       </View>
@@ -838,6 +906,7 @@ export default class Keyboard extends Component {
         {this.renderKeyboardThirdRow()}
         {this.renderKeyboardForthRow()}
         {this.renderKeyboardFifthRow()}
+        {this.renderKeyboardSixthRow()}
       </View>
     )
   }
@@ -847,6 +916,7 @@ const keyboardStyles = StyleSheet.create({
   keyboardContainer: {
     flex: 1,
     marginLeft: 48,
+    marginTop: -20,
     flexDirection: 'column'
   },
   keyboardRowContainer: {
@@ -862,9 +932,9 @@ const keyboardStyles = StyleSheet.create({
     borderRadius: 10,
     marginLeft: 4,
     marginBottom: 2,
-    marginTop: 10
+    marginTop: 8
   },
-  keyButtonPressedStyle: {
+  keyButtonTransparentStyle: {
     opacity: 0
   },
   keyButtonOverlayStyle: {
@@ -873,12 +943,19 @@ const keyboardStyles = StyleSheet.create({
     height: '115%',
     width: '115%',
     borderRadius: 10,
-    marginLeft: -4,
+    marginLeft: -3,
     marginTop: -4,
+  },
+  keyButtonFirstRowStyle: {
+    height: 40,
+    width: 60,
   },
   keyButtonSpecialStyle: {
     width: 58,
-    alignItems: 'center'
+  },
+  keyboardSpecialText: {
+    textAlign: 'center',
+    fontSize: 16,
   },
   keyButtonAlphabetText: {
     marginTop: 2,
@@ -888,13 +965,6 @@ const keyboardStyles = StyleSheet.create({
   keyButtonWithShiftKeyText: {
     marginTop: 2,
     marginLeft: 10,
-    fontSize: 16
-  },
-  keyboardSpecialText: {
-    marginTop: 14,
-    textAlignVertical: 'center',
-    textAlign: 'center',
-    // marginRight: 0,
     fontSize: 16
   },
   keyButtonTextStyle: {
