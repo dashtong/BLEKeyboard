@@ -63,7 +63,7 @@ const App = () => {
         await connectDevices()
           .catch((error) => { console.log(error) })
       }
-    } 
+    }
     else if (!deviceScanning) {
       console.log('No device is connected')
       await scanBleDevices()
@@ -122,7 +122,7 @@ const App = () => {
             ? styles.connecting
             : styles.disconnected])}
       </Blink>
-      <Keyboard device={devices} />
+      <Keyboard device={devices} /> 
     </View>
   )
 }
@@ -130,7 +130,7 @@ const App = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#E9E9ED',
+    backgroundColor: '##D4D4D9',
   },
   connected: {
     backgroundColor: '#66FF66'

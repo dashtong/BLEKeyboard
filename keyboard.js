@@ -1,7 +1,8 @@
 import { Component } from 'react'
-import { StyleSheet, View, Text, TouchableOpacity } from 'react-native'
+import { StyleSheet, View, Text, Image, TouchableOpacity } from 'react-native'
 import base64 from 'react-native-base64'
 import { BleManager } from 'react-native-ble-plx'
+import TrackPad from './trackpad'
 // import { btoa } from 'react-native-quick-base64'
 
 const manager = new BleManager()
@@ -293,7 +294,7 @@ export default class Keyboard extends Component {
     super(props)
     this.isCapped = false
     this.isShifted = false
-    this.state = { isPressed: {} }
+    this.state = { isPressed: {}, isKeyboardMode: true }
   }
 
   getKeyText(row, column) {
@@ -345,16 +346,20 @@ export default class Keyboard extends Component {
     )
   }
 
-  handleKeyboardTouchStarted(key) {
+  handleKeyboardTouchStarted(key, notify = true) {
     let isPressed = { ...this.state.isPressed }
-    this.notify(key + '1')
+    if (notify) {
+      this.notify(key + '1')
+    }
     isPressed[key] = true
     this.setState({ ...this.state, isPressed })
   }
 
-  handleKeyboardTouchEnded(key) {
+  handleKeyboardTouchEnded(key, notify = true) {
     let isPressed = { ...this.state.isPressed }
-    this.notify(key + '0')
+    if (notify) {
+      this.notify(key + '0')
+    }
     delete isPressed[key]
     this.setState({ ...this.state, isPressed })
   }
@@ -843,8 +848,11 @@ export default class Keyboard extends Component {
             keyboardStyles.keyButtonStyle,
             keyboardStyles.keyButtonSpecialStyle
           ]}
-          onTouchStart={() => { }}
-          onTouchEnd={() => { }}
+          onTouchStart={() => { this.handleKeyboardTouchStarted('FUNC', notify = false) }}
+          onTouchEnd={() => {
+            this.handleKeyboardTouchEnded('FUNC', notify = false);
+            this.setState({ ...this.state, isKeyboardMode: false })
+          }}
           key={'FUNC'}>
           {this.renderSpecialText("Fn")}
           <View
@@ -854,9 +862,7 @@ export default class Keyboard extends Component {
                 keyboardStyles.keyButtonOverlayStyle :
                 keyboardStyles.keyButtonTransparentStyle
             ]}>
-            <Text style={[keyboardStyles.keyButtonTextStyle, keyboardStyles.keyboardSpecialText]}>
-              Fn
-            </Text>
+            {this.renderSpecialText("Fn")}
           </View>
         </View>
         <View
@@ -900,14 +906,242 @@ export default class Keyboard extends Component {
 
   render() {
     return (
-      <View style={[keyboardStyles.keyboardContainer]}>
-        {this.renderKeyboardFirstRow()}
-        {this.renderKeyboardSecondRow()}
-        {this.renderKeyboardThirdRow()}
-        {this.renderKeyboardForthRow()}
-        {this.renderKeyboardFifthRow()}
-        {this.renderKeyboardSixthRow()}
-      </View>
+      this.state.isKeyboardMode ?
+        <View style={[keyboardStyles.keyboardContainer]}>
+          {this.renderKeyboardFirstRow()}
+          {this.renderKeyboardSecondRow()}
+          {this.renderKeyboardThirdRow()}
+          {this.renderKeyboardForthRow()}
+          {this.renderKeyboardFifthRow()}
+          {this.renderKeyboardSixthRow()}
+        </View> :
+        <View style={[trackPadLayerStyle.container]}>
+          <View style={[trackPadLayerStyle.buttonContainer]}>
+            <View style={[trackPadLayerStyle.buttonRow1Container]}>
+              <View
+                style={[
+                  keyboardStyles.keyButtonStyle,
+                  keyboardStyles.keyButtonFirstRowStyle,
+                ]}
+                onTouchStart={() => { this.handleKeyboardTouchStarted('BACK', notify = false) }}
+                onTouchEnd={() => {
+                  this.handleKeyboardTouchEnded('BACK', notify = false);
+                  this.setState({ ...this.state, isKeyboardMode: true, isPressed: {} })
+                }}
+                key={'BACK'}>
+                <Image
+                  style={[
+                    keyboardStyles.tinyLogo,
+                    {
+                      marginLeft: 16,
+                      marginTop: 7,
+                    }
+                  ]}
+                  source={require('./assets/back.png')}
+                />
+                <View
+                  style={[
+                    keyboardStyles.keyButtonStyle,
+                    'BACK' in this.state.isPressed ?
+                      keyboardStyles.keyButtonOverlayStyle :
+                      keyboardStyles.keyButtonTransparentStyle
+                  ]}>
+                  <Image
+                    style={[
+                      keyboardStyles.tinyLogo,
+                      {
+                        marginLeft: 20,
+                        marginTop: 10,
+                      }
+                    ]}
+                    source={require('./assets/back.png')}
+                  />
+                </View>
+              </View>
+            </View>
+            <View style={[trackPadLayerStyle.buttonRow2Container]}>
+              <View
+                style={[
+                  {
+                    width: 63
+                  }
+                ]}
+                key="">
+              </View>
+              <View
+                style={[
+                  keyboardStyles.keyButtonStyle,
+                  keyboardStyles.keyButtonFirstRowStyle,
+                  {
+                    marginTop: 23,
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                  }
+                ]}
+                onTouchStart={() => { this.handleKeyboardTouchStarted('UP') }}
+                onTouchEnd={() => {
+                  this.handleKeyboardTouchEnded('UP');
+                }}
+                key={'UP'}>
+                <Image
+                  style={[
+                    keyboardStyles.tinyLogo,
+                    {
+                      marginLeft: 16,
+                      transform: [{ rotate: '90deg' }]
+                    }
+                  ]}
+                  source={require('./assets/arrow.png')}
+                />
+                <View
+                  style={[
+                    keyboardStyles.keyButtonStyle,
+                    'UP' in this.state.isPressed ?
+                      keyboardStyles.keyButtonOverlayStyle :
+                      keyboardStyles.keyButtonTransparentStyle,
+                  ]}>
+                  <Image
+                    style={[
+                      keyboardStyles.tinyLogo,
+                      {
+                        marginLeft: 20,
+                        marginTop: 10,
+                        transform: [{ rotate: '90deg' }]
+                      }
+                    ]}
+                    source={require('./assets/arrow.png')}
+                  />
+                </View>
+              </View>
+            </View>
+            <View style={[trackPadLayerStyle.buttonRow3Container]}>
+              <View
+                style={[
+                  keyboardStyles.keyButtonStyle,
+                  keyboardStyles.keyButtonFirstRowStyle,
+                ]}
+                onTouchStart={() => { this.handleKeyboardTouchStarted('LEFT') }}
+                onTouchEnd={() => {
+                  this.handleKeyboardTouchEnded('LEFT');
+                }}
+                key={'LEFT'}>
+                <Image
+                  style={[
+                    keyboardStyles.tinyLogo,
+                    {
+                      marginLeft: 16,
+                      marginTop: 6,
+                    }
+                  ]}
+                  source={require('./assets/arrow.png')}
+                />
+                <View
+                  style={[
+                    keyboardStyles.keyButtonStyle,
+                    'LEFT' in this.state.isPressed ?
+                      keyboardStyles.keyButtonOverlayStyle :
+                      keyboardStyles.keyButtonTransparentStyle
+                  ]}>
+                  <Image
+                    style={[
+                      keyboardStyles.tinyLogo,
+                      {
+                        marginLeft: 20,
+                        marginTop: 10,
+                      }
+                    ]}
+                    source={require('./assets/arrow.png')}
+                  />
+                </View>
+              </View>
+              <View
+                style={[
+                  keyboardStyles.keyButtonStyle,
+                  keyboardStyles.keyButtonFirstRowStyle,
+                ]}
+                onTouchStart={() => { this.handleKeyboardTouchStarted('DOWN') }}
+                onTouchEnd={() => {
+                  this.handleKeyboardTouchEnded('DOWN');
+                }}
+                key={'DOWN'}>
+                <Image
+                  style={[
+                    keyboardStyles.tinyLogo,
+                    {
+                      marginLeft: 16,
+                      marginTop: 6,
+                      transform: [{ rotate: '270deg' }]
+                    }
+                  ]}
+                  source={require('./assets/arrow.png')}
+                />
+                <View
+                  style={[
+                    keyboardStyles.keyButtonStyle,
+                    'DOWN' in this.state.isPressed ?
+                      keyboardStyles.keyButtonOverlayStyle :
+                      keyboardStyles.keyButtonTransparentStyle
+                  ]}>
+                  <Image
+                    style={[
+                      keyboardStyles.tinyLogo,
+                      {
+                        marginLeft: 20,
+                        marginTop: 10,
+                        transform: [{ rotate: '270deg' }]
+                      }
+                    ]}
+                    source={require('./assets/arrow.png')}
+                  />
+                </View>
+              </View>
+              <View
+                style={[
+                  keyboardStyles.keyButtonStyle,
+                  keyboardStyles.keyButtonFirstRowStyle,
+                ]}
+                onTouchStart={() => { this.handleKeyboardTouchStarted('RIGHT') }}
+                onTouchEnd={() => {
+                  this.handleKeyboardTouchEnded('RIGHT');
+                }}
+                key={'RIGHT'}>
+                <Image
+                  style={[
+                    keyboardStyles.tinyLogo,
+                    {
+                      marginLeft: 16,
+                      marginTop: 6,
+                      transform: [{ rotate: '180deg' }]
+                    }
+                  ]}
+                  source={require('./assets/arrow.png')}
+                />
+                <View
+                  style={[
+                    keyboardStyles.keyButtonStyle,
+                    'RIGHT' in this.state.isPressed ?
+                      keyboardStyles.keyButtonOverlayStyle :
+                      keyboardStyles.keyButtonTransparentStyle
+                  ]}>
+                  <Image
+                    style={[
+                      keyboardStyles.tinyLogo,
+                      {
+                        marginLeft: 20,
+                        marginTop: 10,
+                        transform: [{ rotate: '180deg' }]
+                      }
+                    ]}
+                    source={require('./assets/arrow.png')}
+                  />
+                </View>
+              </View>
+            </View>
+          </View>
+          <View style={[trackPadLayerStyle.trackPadContainer]}>
+            <TrackPad />
+          </View>
+        </View >
     )
   }
 }
@@ -943,7 +1177,7 @@ const keyboardStyles = StyleSheet.create({
     height: '115%',
     width: '115%',
     borderRadius: 10,
-    marginLeft: -3,
+    marginLeft: -4,
     marginTop: -4,
   },
   keyButtonFirstRowStyle: {
@@ -971,10 +1205,48 @@ const keyboardStyles = StyleSheet.create({
     color: '#000000',
     fontSize: 32
   },
+  LogoStyle: {
+
+  },
+  tinyLogo: {
+    width: 25,
+    height: 25,
+    marginLeft: 14
+  },
   whiteText: {
     color: '#FFFFFF'
   },
   darkText: {
     color: '#FF00FF'
   }
+})
+
+const trackPadLayerStyle = StyleSheet.create({
+  container: {
+    flex: 1,
+    marginLeft: 48,
+    marginTop: -20,
+    flexDirection: 'row'
+  },
+  buttonContainer: {
+    flex: 3,
+    flexDirection: 'column',
+  },
+  buttonRow1Container: {
+    flex: 5.5,
+    flexDirection: 'column',
+  },
+  buttonRow2Container: {
+    flex: 1.5,
+    flexDirection: 'row',
+  },
+  buttonRow3Container: {
+    flex: 2,
+    flexDirection: 'row',
+  },
+  trackPadContainer: {
+    flex: 7,
+    flexDirection: 'column',
+    // backgroundColor: '#E3D5CA',
+  },
 })
